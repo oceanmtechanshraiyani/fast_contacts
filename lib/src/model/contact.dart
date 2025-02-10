@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+
 @immutable
 class Contact {
   const Contact({
@@ -8,6 +9,8 @@ class Contact {
     required this.emails,
     required this.structuredName,
     required this.organization,
+    required this.lastMessage,
+    required this.isRegistered,
   });
 
   final String id;
@@ -15,6 +18,8 @@ class Contact {
   final List<Email> emails;
   final StructuredName? structuredName;
   final Organization? organization;
+  final String? lastMessage;
+  final bool isRegistered;
 
   String get displayName => structuredName?.displayName ?? '';
 
@@ -27,7 +32,9 @@ class Contact {
           phones == other.phones &&
           emails == other.emails &&
           structuredName == other.structuredName &&
-          organization == other.organization;
+          organization == other.organization &&
+          lastMessage == other.lastMessage &&
+          isRegistered == other.isRegistered;
 
   @override
   int get hashCode =>
@@ -35,11 +42,13 @@ class Contact {
       phones.hashCode ^
       emails.hashCode ^
       structuredName.hashCode ^
-      organization.hashCode;
+      organization.hashCode ^
+      lastMessage.hashCode ^
+      isRegistered.hashCode;
 
   @override
   String toString() {
-    return 'Contact{id: $id, phones: $phones, emails: $emails, structuredName: $structuredName, organization: $organization}';
+    return 'Contact{id: $id, phones: $phones, emails: $emails, structuredName: $structuredName, organization: $organization,lastMessage: $lastMessage, isRegistered: $isRegistered, }';
   }
 
   Map<String, dynamic> toMap() {
@@ -49,24 +58,20 @@ class Contact {
       'emails': emails.map((e) => e.toMap()).toList(),
       if (structuredName != null) 'structuredName': structuredName!.toMap(),
       if (organization != null) 'organization': organization!.toMap(),
+      'lastMessage': lastMessage,
+      'isRegistered': isRegistered,
     };
   }
 
   factory Contact.fromMap(Map map) {
     return Contact(
       id: map['id'] ?? '',
-      phones:
-          (map['phones'] as List?)?.cast<Map>().map(Phone.fromMap).toList() ??
-              const [],
-      emails:
-          (map['emails'] as List?)?.cast<Map>().map(Email.fromMap).toList() ??
-              const [],
-      structuredName: map['structuredName'] != null
-          ? StructuredName.fromMap(map['structuredName']!)
-          : null,
-      organization: map['organization'] != null
-          ? Organization.fromMap(map['organization']!)
-          : null,
+      phones: (map['phones'] as List?)?.cast<Map>().map(Phone.fromMap).toList() ?? const [],
+      emails: (map['emails'] as List?)?.cast<Map>().map(Email.fromMap).toList() ?? const [],
+      structuredName: map['structuredName'] != null ? StructuredName.fromMap(map['structuredName']!) : null,
+      organization: map['organization'] != null ? Organization.fromMap(map['organization']!) : null,
+      lastMessage: map['lastMessage'] ?? "",
+      isRegistered: map['isRegistered'] ?? false,
     );
   }
 }
