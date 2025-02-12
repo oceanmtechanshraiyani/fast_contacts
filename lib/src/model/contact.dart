@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 
-
 @immutable
 class Contact {
   const Contact({
@@ -11,6 +10,7 @@ class Contact {
     required this.organization,
     required this.lastMessage,
     required this.isRegistered,
+    this.lastMessageTimestamp, // Add this field
   });
 
   final String id;
@@ -20,6 +20,7 @@ class Contact {
   final Organization? organization;
   final String? lastMessage;
   final bool isRegistered;
+  final DateTime? lastMessageTimestamp; // New field for sorting
 
   String get displayName => structuredName?.displayName ?? '';
 
@@ -34,6 +35,7 @@ class Contact {
           structuredName == other.structuredName &&
           organization == other.organization &&
           lastMessage == other.lastMessage &&
+          lastMessageTimestamp == other.lastMessageTimestamp && // Compare timestamps
           isRegistered == other.isRegistered;
 
   @override
@@ -44,11 +46,12 @@ class Contact {
       structuredName.hashCode ^
       organization.hashCode ^
       lastMessage.hashCode ^
+      lastMessageTimestamp.hashCode ^ // Hash timestamp
       isRegistered.hashCode;
 
   @override
   String toString() {
-    return 'Contact{id: $id, phones: $phones, emails: $emails, structuredName: $structuredName, organization: $organization,lastMessage: $lastMessage, isRegistered: $isRegistered, }';
+    return 'Contact{id: $id, phones: $phones, emails: $emails, structuredName: $structuredName, organization: $organization, lastMessage: $lastMessage, lastMessageTimestamp: $lastMessageTimestamp, isRegistered: $isRegistered}';
   }
 
   Map<String, dynamic> toMap() {
@@ -59,6 +62,7 @@ class Contact {
       if (structuredName != null) 'structuredName': structuredName!.toMap(),
       if (organization != null) 'organization': organization!.toMap(),
       'lastMessage': lastMessage,
+      'lastMessageTimestamp': lastMessageTimestamp?.millisecondsSinceEpoch, // Store as timestamp
       'isRegistered': isRegistered,
     };
   }
@@ -71,6 +75,9 @@ class Contact {
       structuredName: map['structuredName'] != null ? StructuredName.fromMap(map['structuredName']!) : null,
       organization: map['organization'] != null ? Organization.fromMap(map['organization']!) : null,
       lastMessage: map['lastMessage'] ?? "",
+      lastMessageTimestamp: map['lastMessageTimestamp'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['lastMessageTimestamp'])
+          : null, // Convert timestamp
       isRegistered: map['isRegistered'] ?? false,
     );
   }
@@ -89,10 +96,7 @@ class Phone {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Phone &&
-          runtimeType == other.runtimeType &&
-          number == other.number &&
-          label == other.label;
+      other is Phone && runtimeType == other.runtimeType && number == other.number && label == other.label;
 
   @override
   int get hashCode => number.hashCode ^ label.hashCode;
@@ -130,10 +134,7 @@ class Email {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Email &&
-          runtimeType == other.runtimeType &&
-          address == other.address &&
-          label == other.label;
+      other is Email && runtimeType == other.runtimeType && address == other.address && label == other.label;
 
   @override
   int get hashCode => address.hashCode ^ label.hashCode;
@@ -247,8 +248,7 @@ class Organization {
           jobDescription == other.jobDescription;
 
   @override
-  int get hashCode =>
-      company.hashCode ^ department.hashCode ^ jobDescription.hashCode;
+  int get hashCode => company.hashCode ^ department.hashCode ^ jobDescription.hashCode;
 
   @override
   String toString() {
