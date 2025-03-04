@@ -11,6 +11,7 @@ class Contact {
     required this.lastMessage,
     required this.isRegistered,
     this.lastMessageTimestamp, // Add this field
+    this.tag
   });
 
   final String id;
@@ -21,6 +22,7 @@ class Contact {
   final String? lastMessage;
   final bool isRegistered;
   final DateTime? lastMessageTimestamp; // New field for sorting
+  final String? tag;
 
   String get displayName => structuredName?.displayName ?? '';
 
@@ -36,7 +38,9 @@ class Contact {
           organization == other.organization &&
           lastMessage == other.lastMessage &&
           lastMessageTimestamp == other.lastMessageTimestamp && // Compare timestamps
-          isRegistered == other.isRegistered;
+          isRegistered == other.isRegistered &&
+          tag == other.tag;
+        
 
   @override
   int get hashCode =>
@@ -47,11 +51,13 @@ class Contact {
       organization.hashCode ^
       lastMessage.hashCode ^
       lastMessageTimestamp.hashCode ^ // Hash timestamp
-      isRegistered.hashCode;
+      isRegistered.hashCode ^
+      tag.hashCode;
+      
 
   @override
   String toString() {
-    return 'Contact{id: $id, phones: $phones, emails: $emails, structuredName: $structuredName, organization: $organization, lastMessage: $lastMessage, lastMessageTimestamp: $lastMessageTimestamp, isRegistered: $isRegistered}';
+    return 'Contact{id: $id, phones: $phones, emails: $emails, structuredName: $structuredName, organization: $organization, lastMessage: $lastMessage, lastMessageTimestamp: $lastMessageTimestamp, isRegistered: $isRegistered , tag: $tag}';
   }
 
   Map<String, dynamic> toMap() {
@@ -64,6 +70,7 @@ class Contact {
       'lastMessage': lastMessage,
       'lastMessageTimestamp': lastMessageTimestamp?.millisecondsSinceEpoch, // Store as timestamp
       'isRegistered': isRegistered,
+      'tag': tag,
     };
   }
 
@@ -79,6 +86,7 @@ class Contact {
           ? DateTime.fromMillisecondsSinceEpoch(map['lastMessageTimestamp'])
           : null, // Convert timestamp
       isRegistered: map['isRegistered'] ?? false,
+      tag: map['tag'] ?? "",
     );
   }
 }
